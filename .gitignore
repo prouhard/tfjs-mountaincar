@@ -1,0 +1,7 @@
+# Node modules
+node_modules/
+
+# Cached files
+.cache/
+
+dist/

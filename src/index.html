@@ -1,0 +1,187 @@
+<!--
+Copyright 2018 Google LLC. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+==============================================================================
+-->
+
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/tfjs-examples.css" />
+</head>
+
+<body>
+
+  <style>
+    #app-status {
+      color: blue;
+      padding-bottom: 1em;
+    }
+
+    .buttons-section {
+      margin-top: 12px;
+    }
+
+    .init-model {
+      width: 80%;
+      margin-right: 50px;
+    }
+
+    .input-div, .status {
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      min-width: 200px;
+      display: inline-block;
+    }
+
+    button {
+      max-width: 300px;
+    }
+
+    .note {
+      font-size: 80%;
+      font-style: italic;
+      display: inline-block;
+      margin-left: 15px;
+    }
+  </style>
+
+  <body>
+    <div class="tfjs-example-container centered-container">
+      <section class='title-area'>
+        <h1>TensorFlow.js: Reinforcement Learning</h1>
+        <p class='subtitle'>Train a model to make a car climb a hill using reinforcement learning.</p>
+      </section>
+
+      <section>
+        <p class='section-head'>Instructions</p>
+        <p></p>
+        <ul>
+          <li>
+            Choose a hidden layer size and click "Create Model".
+          </li>
+          <li>
+            Select training parameters and then click "Train".
+          </li>
+          <li>
+            Note that while the model is training it periodically saves a copy of itself
+            to local browser storage, this mean you can refresh the page and continue training
+            from the last save point. If at any point you want to start training from scratch, click
+            "Delete stored Model".
+          </li>
+          <li>
+            Once the model has finished training you can click "Test" to see how many 'steps' the agent
+            can balance the pole for. You can also click 'Stop' to pause the training after the current iteration
+            ends if you want to test the model sooner.
+          </li>
+          <li>During training and testing a small simulation of the agent behaviour will be rendered.</li>
+        </ul>
+      </section>
+
+      <section>
+        <p class='section-head'>Status</p>
+        <div>
+          <span id="app-status">Standing by.</span>
+        </div>
+
+        <div>
+          <p class='section-head'>Initialize Model</p>
+          <div class="with-cols">
+            <div class="with-rows init-model">
+              <div class="input-div with-rows">
+                <label class="input-label">Hidden layer size(s) (e.g.: "256", "32,64"):</label>
+                <input id="hidden-layer-sizes" value="128"></input>
+              </div>
+              <button id="create-model" disabled="true">Create model</button>
+            </div>
+            <div class="with-rows init-model">
+              <div class="input-div with-rows">
+                <label class="input-label">Locally-stored model</label>
+                <input id="stored-model-status" value="N/A" disabled="true" readonly="true"></input>
+              </div>
+              <button id="delete-stored-model" disabled="true">Delete stored model</button>
+            </div>
+          </div>
+
+          <p class='section-head'>Training Parameters</p>
+          <div class="with-rows">
+            <div class="input-div">
+              <label class="input-label">Number of iterations:</label>
+              <input id="num-iterations" value="20"></input>
+            </div>
+            <div class="input-div">
+              <label class="input-label">Games per iteration:</label>
+              <input id="games-per-iteration" value="20"></input>
+            </div>
+            <div class="input-div">
+              <label class="input-label">Max. steps per game:</label>
+              <input id="max-steps-per-game" value="500"></input>
+            </div>
+            <div class="input-div">
+              <label class="input-label">Reward discount rate:</label>
+              <input id="discount-rate" value="0.95"></input>
+            </div>
+            <div class="input-div">
+              <label class="input-label">Render during training:</label>
+              <input type="checkbox" id="render-during-training" />
+              <span class="note">Uncheck me to speed up training.</span>
+            </div>
+
+            <div class="buttons-section">
+              <button id="train" disabled="true">Train</button>
+              <button id="test" disabled="true">Test</button>
+            </div>
+          </div>
+
+
+        </div>
+      </section>
+
+      <section>
+        <p class='section-head'>Training Progress</p>
+        <div class="with-rows">
+          <div class="status">
+            <label id="train-status">Iteration #:</label>
+            <progress value="0" max="100" id="train-progress"></progress>
+          </div>
+          <div class="status">
+            <label id="iteration-status">Game #:</label>
+            <progress value="0" max="100" id="iteration-progress"></progress>
+          </div>
+
+          <div class="status">
+            <label>Best position:</label>
+            <span id="best-position" class="status-span"></span>
+          </div>
+          <div id="steps-container"></div>
+        </div>
+      </section>
+
+      <section>
+        <p class='section-head'>Simulation</p>
+        <div>
+          <canvas id="mountain-car-canvas" height=400px" width="600"></canvas>
+        </div>
+      </section>
+
+
+      <script src="js/index.js"></script>
+  </body>
+
+</html>
