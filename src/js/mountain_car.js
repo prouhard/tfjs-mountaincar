@@ -19,17 +19,17 @@ export class MountainCar {
    * Constructor of MountainCar.
    */
   constructor() {
-    // Constants that characterize the system.
+      // Constants that characterize the system.
+
     this.minPosition = -1.2;
     this.maxPosition = 0.6;
     this.maxSpeed = 0.07;
     this.goalPosition = 0.5;
     this.goalVelocity = 0;
-
     this.gravity = 0.0025;
     this.carWidth = 0.2;
     this.carHeight = 0.1;
-    this.force = 0.0018;
+    this.force = 0.0013;
 
     this.setRandomState();
   }
@@ -62,24 +62,13 @@ export class MountainCar {
    * @returns {bool} Whether the simulation is done.
    */
   update(action) {
-    console.log(action);
-
-    this.velocity += action * this.force - Math.cos(
-      3 * this.position) * this.gravity;
-    this.velocity = Math.min(
-      Math.max(this.velocity, -this.maxSpeed),
-      this.maxSpeed
-    );
+    this.velocity += action * this.force - Math.cos(3 * this.position) * this.gravity;
+    this.velocity = Math.min(Math.max(this.velocity, -this.maxSpeed), this.maxSpeed);
 
     this.position += this.velocity
-    this.position = Math.min(
-      Math.max(this.position, this.minPosition),
-      this.maxPosition
-    );
+    this.position = Math.min(Math.max(this.position, this.minPosition), this.maxPosition);
 
-    if (this.position == this.minPosition && this.velocity < 0 ){
-      this.velocity = 0;
-    }
+    if (this.position == this.minPosition && this.velocity < 0 ) this.velocity = 0;
 
     return this.isDone();
   }

@@ -316,7 +316,7 @@ export async function setUpUI() {
     while (!isDone) {
       steps++;
       tf.tidy(() => {
-        const action = policyNet.model.chooseAction(mountainCar.getStateTensor());
+        const action = policyNet.model.chooseAction(mountainCar.getStateTensor(), 0);
         logStatus(
             `Test in progress. ` +
             `Action: ${action === 1 ? '<--' : ' -->'} (Step ${steps})`);

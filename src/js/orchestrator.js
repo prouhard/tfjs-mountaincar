@@ -4,7 +4,6 @@ import { Memory } from './memory';
 import { maybeRenderDuringTraining, setUpUI } from './ui';
 
 import * as tf from '@tensorflow/tfjs';
-import { squaredDifference } from '@tensorflow/tfjs';
 
 const MIN_EPSILON = 0.01;
 const MAX_EPSILON = 0.2;
@@ -68,7 +67,7 @@ export class Orchestrator {
             await maybeRenderDuringTraining(this.mountainCar);
 
             // Interaction with the environment
-            const action = this.model.chooseAction(state);
+            const action = this.model.chooseAction(state, this.eps);
             const done = this.mountainCar.update(action);
             const reward = this.computeReward(this.mountainCar.position);
 
@@ -88,7 +87,7 @@ export class Orchestrator {
             totalReward += reward;
             step += 1;
             
-            // Keep track of the mac position reached and store the total reward
+            // Keep track of the max position reached and store the total reward
             if (done || step == this.maxStepsPerGame) {
                 this.rewardStore.push(totalReward);
                 this.maxPositionStore.push(maxPosition);
@@ -117,15 +116,15 @@ export class Orchestrator {
         batch.forEach(
             ([state, action, reward, nextState], index) => {
                 const currentQ = qsa[index];
-                currentQ[action] = nextState ? reward + this.discountRate * qsad[index].argMax(1) : reward;
+                currentQ[action] = nextState ? reward + this.discountRate * qsad[index].max() : reward;
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
             }
         );
 
         // Clean unused tensors
-        tf.dispose(qsa);
-        tf.dispose(qsad);
+        qsa.forEach((state) => state.dispose());
+        qsad.forEach((state) => state.dispose());
 
         // Reshape the batches to be fed to the network
         x = tf.tensor2d(x, [x.length, this.model.numStates])
@@ -133,5 +132,8 @@ export class Orchestrator {
 
         // Learn the Q(s, a) values given associated discounted rewards
         await this.model.train(x, y);
+
+        x.dispose();
+        y.dispose();
     }
 }

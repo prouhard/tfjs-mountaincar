@@ -31,7 +31,7 @@ export class Model {
         hiddenLayerSizes.forEach((hiddenLayerSize, i) => {
         this.network.add(tf.layers.dense({
             units: hiddenLayerSize,
-            activation: 'elu',
+            activation: 'relu',
             // `inputShape` is required only for the first layer.
             inputShape: i === 0 ? [this.numStates] : undefined
             }));
@@ -62,11 +62,16 @@ export class Model {
      * @param {tf.Tensor} state
      * @returns {number} The action chosen by the model (-1 | 0 | 1)
      */
-    chooseAction(state) {
-        if (Math.random() < this.eps) {
+    chooseAction(state, eps) {
+        if (Math.random() < eps) {
             return Math.floor(Math.random() * this.numActions) - 1;
         } else {
-            return this.predict(state).argMax(1).dataSync()[0] - 1
+            return tf.tidy(() => {
+                const logits = this.network.predict(state);
+                const sigmoid = tf.sigmoid(logits);
+                const probs = tf.div(sigmoid, tf.sum(sigmoid));
+                return tf.multinomial(probs, 1).dataSync()[0] - 1;
+            });
         }
     }
 }
