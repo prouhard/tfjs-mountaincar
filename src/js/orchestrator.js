@@ -116,7 +116,7 @@ export class Orchestrator {
         batch.forEach(
             ([state, action, reward, nextState], index) => {
                 const currentQ = qsa[index];
-                currentQ[action] = nextState ? reward + this.discountRate * qsad[index].max() : reward;
+                currentQ[action] = nextState ? reward + this.discountRate * qsad[index].max().dataSync() : reward;
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
             }
