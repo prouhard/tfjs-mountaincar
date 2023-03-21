@@ -42,17 +42,19 @@ export class Orchestrator {
      * @returns {number} Reward corresponding to the position
      */
     computeReward(position) {
-        let reward = 0;
-        if (position >= 0) {
-            reward = 5;
-        } else if (position >= 0.1) {
-            reward = 10;
-        } else if (position >= 0.25) {
-            reward = 20;
-        } else if (position >= 0.5) {
-            reward = 100;
+        if (position >= 0.5) {
+            return 100;
         }
-        return reward;
+        if (position >= 0.25) {
+            return 20;
+        }
+        if (position >= 0.1) {
+            return 10;
+        }
+        if (position >= 0) {
+            return 5;
+        }
+        return 0;
     }
 
     async run() {
